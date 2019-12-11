@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1569626428439.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3DEF933E",
+    "lastKnownWriteTime" : 3180141919958494821,
+    "last_content_update" : 1569626428439,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "84124F4E",
+        "caption" : "Harassment0.5",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Harassment0.5&cache_key=84124F4E",
+        "displayedObservations" : 500,
+        "environment" : "",
+        "expression" : "Harassment0.5",
+        "object" : "Harassment0.5",
+        "preview" : 0,
+        "totalObservations" : 500,
+        "variables" : 3
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

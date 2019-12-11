@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1569391272147.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2311843295",
+    "id" : "68A88C46",
+    "lastKnownWriteTime" : 1569626245,
+    "last_content_update" : 1569626245,
+    "path" : "~/Data Science/Assignment1/VehiclesDataAnalysis/VehicleAnalysis.R",
+    "project_path" : "VehicleAnalysis.R",
+    "properties" : {
+        "cursorPosition" : "285,0",
+        "scrollLine" : "240",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

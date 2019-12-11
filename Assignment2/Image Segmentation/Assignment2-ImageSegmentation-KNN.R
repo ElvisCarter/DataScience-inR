@@ -1,0 +1,292 @@
+install.packages("ggplot2")
+install.packages("rpart")
+library(ggplot2)
+library(rpart)
+
+install.packages("neuralnet")
+require(neuralnet)
+?infert
+dim(infert)
+?neuralnet
+dim(segmentation)
+summary(segmentation)
+summary(segmentation$V20)
+
+#way to import file by choosing parameters
+#segm <-read.table(file.choose(), sep = ',')
+
+#renaming columns to correct names
+names(segmentation) <- c("Factor", "REGION-CENTROID-COL","REGION-CENTROID-ROW","REGION-PIXEL-COUNT","SHORT-LINE-DENSITY-5","SHORT-LINE-DENSITY-2","VEDGE-MEAN","VEDGE-SD","HEDGE-MEAN","HEDGE-SD","INTENSITY-MEAN","RAWRED-MEAN","RAWBLUE-MEAN","RAWGREEN-MEAN","EXRED-MEAN","EXBLUE-MEAN","EXGREEN-MEAN","VALUE-MEAN","SATURATION-MEAN","HUE-MEAN")
+names(segmentation.data) <- c("Factor", "REGION-CENTROID-COL","REGION-CENTROID-ROW","REGION-PIXEL-COUNT","SHORT-LINE-DENSITY-5","SHORT-LINE-DENSITY-2","VEDGE-MEAN","VEDGE-SD","HEDGE-MEAN","HEDGE-SD","INTENSITY-MEAN","RAWRED-MEAN","RAWBLUE-MEAN","RAWGREEN-MEAN","EXRED-MEAN","EXBLUE-MEAN","EXGREEN-MEAN","VALUE-MEAN","SATURATION-MEAN","HUE-MEAN")
+
+#fixing the row issuse
+data <- segmentation[-1,]
+segmentation <- segmentation[-1,]
+segmentation.data <- segmentation.data[-1,]
+
+
+#quick peak into data
+str(segmentation)
+head(segmentation)
+
+DataSample <- data[,]
+as.numeric(DataSample[,c(2:19)])
+
+#unfactoring all variables, except the first one
+install.packages("varhandle")
+library(varhandle)
+DataSample <- unfactor(DataSample)
+head(DataSample)
+str(DataSample)
+DataSample$Factor<- as.factor(DataSample$Factor)
+str(DataSample)
+str(data)
+str(data$Factor)
+data$Factor
+levels(data$Factor)
+levels(DataSample$Factor)
+
+#copying over test set & Normalizing
+DataTestSet <- segmentation.data
+DataTestSet <- unfactor(DataTestSet)
+str(DataTestSet)
+DataTestSet$Factor <- as.factor(DataTestSet$Factor)
+str(DataTestSet$`REGION-PIXEL-COUNT`)
+
+#creating training and test sets from data
+dt = sort(sample(nrow(data), nrow(data)*.7))
+train <- data[dt,]
+testset<-data[-dt,]
+
+#ensuring credibility
+train.labels <-data[dt,1]
+testset.labels<-data[-dt,1]
+
+#installing class package
+install.packages("class")
+library(class)
+
+#finding number of observations in our dataset
+nrow(train)
+nrow(testset)
+
+train$Factor<- as.numeric(train$Factor)
+testset$Factor <- as.numeric(testset$Factor)
+
+#next-setting k value 
+sqrt(nrow(train))
+sqrt(nrow(testset))
+knn.37 <- knn(train = train,test = testset,cl=train.labels, k=37)
+knn.39 <- knn(train = train,test = testset,cl=train.labels, k=39)
+
+nrow(testset.labels)
+
+#testing accuracy 
+ACC.37 <- 100 * sum(testset.labels ==knn.37)/NROW(testset.labels)
+ACC.37
+
+ACC.39 <- 100 * sum(testset.labels ==knn.39)/NROW(testset.labels)
+ACC.39
+
+#tabular form
+table(knn.37, testset.labels)
+table(knn.39, testset.labels)
+
+knn.37
+knn.39
+
+
+
+ImageSet <-rbind(DataSample,DataTestSet)
+
+install.packages("dplyr")
+library(dplyr)
+install.packages("tidyverse")
+library(tidyverse)
+
+#getting unique dataset  
+ImageSet <- unique(ImageSet)
+#getting validation set
+ImageSet.label <-ImageSet[,1]
+
+#changin to workable data
+ImageSet$Factor <-as.numeric(ImageSet$Factor)
+#partitioning data
+dts = sort(sample(nrow(ImageSet), nrow(ImageSet)*.9))
+
+trainImage <- ImageSet[dts,]
+testImage<-ImageSet[-dts,]
+str(ImageSet)
+sqrt(nrow(trainImage))
+
+
+ImageSet.label <- trainImage[,1]
+knn.37.2 <- knn(trainImage[,-1],testImage[,-1],ImageSet.label, k=37)
+knn.39.2 <- knn(trainImage[,-1],testImage[,-1],ImageSet.label, k=39)
+
+str(trainImage)
+
+#testing accuracy 
+ACC.37.2 <- 100 * sum(ImageSet.label==knn.37.2)/NROW(ImageSet.label)
+ACC.37.2
+
+ACC.39.2 <- 100 * sum(ImageSet.label==knn.39.2)/NROW(ImageSet.label)
+ACC.39.2
+
+install.packages("caret")
+library(caret)
+confusionMatrix(table(knn.37, testset.labels))
+
+
+###################################################################################################
+######################################################################################################
+#new test
+
+CrossTrain <- ImageSet
+
+library(caret)
+library(ggplot2)
+str(CrossTrain)
+summary(CrossTrain)
+CrossTrain$Factor <-as.factor(CrossTrain$Factor)
+set.seed(1877)
+
+
+
+#partitioning data
+install.packages("caTools")
+library(caTools)
+ind = createDataPartition(CrossTrain$Factor,p= 9/10, list = FALSE)
+trainDF<- CrossTrain[ind,]
+testDF <- CrossTrain[-ind,]
+
+# we will do cross validation on training Data set
+ControlParameters <- trainControl( method = "cv", number = 10, savePredictions = TRUE, classProbs = TRUE)
+
+parameterGrid <- expand.grid(knn(trainDF, testDF,k=ceiling(sqrt(nrow(trainDF))), cl=trainDF[,1]))
+
+modelRandom <- train(trainDF$Factor~., data=trainDF, method="knn", 
+                     trControl = ControlParameters,
+                     #preProcess = c('center', 'scale')
+                     )
+#names(getModelInfo())
+
+
+predictions<- predict(modelRandom, testDF)
+t <- table( predictions=predictions,actual=testDF$Factor)
+t
+
+#############################################3333333
+###################################################
+TrainData <- CrossTrain[,c(2:20)]
+TrainClasses <- CrossTrain[,1]
+knnFit <- train(TrainData,TrainClasses,method="knn")
+knnFit1 <- train(TrainData,TrainClasses,method="knn",
+                 #preProcess = c("center", "scale"),
+                 tuneLength =10,
+                 trControl= trainControl(method = "cv", number = 10, savePredictions = TRUE))
+w<-table(TrainClasses,predict(knnFit))
+w
+y<-table(TrainClasses,predict(knnFit1))
+y
+table(TrainClasses,predict(knnFit1))
+#make.names(levels(TrainClasses))
+as.factor(TrainClasses)
+levels(TrainClasses)
+summary(y)
+knnFit1
+plot(knnFit1, 
+     xlab= "Number of Neighbors(k)",
+     main="Comparison of Accuracy against K", 
+     )
+
+#predicting the test variables
+KnnPredict <- predict(knnFit1, newdata = testDF)
+view(data.frame(KnnPredict, testDF$Factor))
+
+table(TrainClasses,predict(knnFit1))
+table(KnnPredict,testDF$Factor)
+
+re<-confusionMatrix(data = KnnPredict, 
+                reference = testDF$Factor,
+                dnn = c("Algo predicted values", "Actual Test Values"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TRYING TO OPTIMIZE THE ACCURACY 
+#str(segmentation)
+#dataNew <- droplevels(data)
+#str(dataNew)
+#dataNewTEst <- droplevels(DataTestSet)
+#levels(dataNewTEst$Factor)
+#dataNew.labels <-data[,1]
+#dataNew.labels <- droplevels(dataNew.labels)
+#levels(dataNew.labels)
+#testing 
+#sqrt(nrow(dataNew))
+#sqrt(nrow(dataNewTEst))
+
+
+#dataNew$Factor<- as.numeric(dataNew$Factor)
+#dataNewTEst$Factor <- as.numeric(dataNewTEst$Factor)
+
+#knn.45 <- knn(train = dataNew,test = dataNewTEst,cl=dataNew.labels, k=45)
+#knn.47 <- knn(train = dataNew,test = dataNewTEst,cl=dataNew.labels, k=47)
+
+#knn.45 <-droplevels(knn.45)
+#knn.47 <-droplevels(knn.47)
+
+#ACC.45 <- 100 * sum(dataNew.labels ==knn.45)/NROW(dataNew.labels)
+#ACC.45
+
+#ACC.47 <- 100 * sum(dataNew.labels ==knn.47)/NROW(dataNew.labels)
+#ACC.47
+#table(knn.45, dataNew.labels)
+#table(knn.47, dataNew.labels)
+#str(dataNew$Factor)

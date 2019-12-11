@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1569549253202.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7AFED701",
+    "lastKnownWriteTime" : 2184674283816,
+    "last_content_update" : 1569549253202,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "id" : "3378516819c447d4879581b598e2fc8c",
+        "name" : "dtm",
+        "title" : "dtm"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "object_explorer"
+}

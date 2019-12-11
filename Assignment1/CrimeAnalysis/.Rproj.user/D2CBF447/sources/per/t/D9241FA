@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1569626459171.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "D9241FA",
+    "lastKnownWriteTime" : 6643712369336792884,
+    "last_content_update" : 1569626459171,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "C96E54D1",
+        "caption" : "PetitLarcency6.11",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=PetitLarcency6.11&cache_key=C96E54D1",
+        "displayedObservations" : 500,
+        "environment" : "",
+        "expression" : "PetitLarcency6.11",
+        "object" : "PetitLarcency6.11",
+        "preview" : 0,
+        "totalObservations" : 500,
+        "variables" : 3
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
